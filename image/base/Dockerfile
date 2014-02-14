@@ -33,8 +33,7 @@ EXPOSE 22
 # Prepare Git
 ADD git-shell-commands/ /home/git/git-shell-commands/
 ADD hooks/ /home/git/.git-templates/hooks/
-RUN git config --global init.templatedir '/home/git/.git-templates' && \
-    git --bare init /home/git/app.git && \
+RUN git --bare init --template="/home/git/.git-templates" /home/git/app.git && \
     chgrp -hR git /home/git/app.git && \
     chmod -R g+rwx /home/git/app.git
 
