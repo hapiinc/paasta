@@ -16,7 +16,7 @@ RUN apt-get update && \
     apt-get install -q -y nodejs
 
 # Prepare NodeJS
-EXPOSE 80 443
+EXPOSE 8080
 
 # Bootstrap
 CMD "/opt/bin/entry"
