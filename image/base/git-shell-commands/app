@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ "$1" = "--start" ] && [ -n "$2" ]
+then
+    # Create a Valid Git Project Name from the Argument Supplied in the Arguments Vector.
+    PROJECT=$(echo "$2" | sed 's/\.git$\|$/.git/i')
+    # Find the Git Project in the Home Directory.
+    cd
+    for APP in *.git
+    do
+        # Invoke the deployment hook script to start the application.
+        if [ "$APP" = "$PROJECT" ]
+        then
+            # May eventually decouple from the hooks path.
+            cd $APP && sh hooks/post-receive
+            break
+        fi
+    done
+else
+    echo "Please Enter a Supported Option:"
+    echo "--start <project.git>"
+fi
