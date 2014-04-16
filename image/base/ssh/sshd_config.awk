@@ -1,15 +1,16 @@
 BEGIN {
-    PermitRootLogin = "no";
+    PermitRootLogin = "yes";
     ChallengeResponseAuthentication = "no";
     PasswordAuthentication = "no";
+    RSAAuthentication = "yes";
     AllowTcpForwarding = "no";
     X11Forwarding = "no";
-    AllowGroups = "git";
     LogLevel = "VERBOSE";
 
     FoundPermitRootLogin = 0;
     FoundChallengeResponseAuthentication = 0;
     FoundPasswordAuthentication = 0;
+    FoundRSAAuthentication = 0;
     FoundAllowTcpForwarding = 0;
     FoundX11Forwarding = 0;
     FoundLogLevel = 0;
@@ -24,6 +25,9 @@ BEGIN {
     } else if($1 == "PasswordAuthentication") {
         $2 = PasswordAuthentication;
         FoundPasswordAuthentication = 1;
+    } else if($1 == "RSAAuthentication") {
+        $2 = RSAAuthentication;
+        FoundRSAAuthentication = 1;
     } else if($1 == "AllowTcpForwarding") {
         $2 = AllowTcpForwarding;
         FoundAllowTcpForwarding = 1;
@@ -33,9 +37,6 @@ BEGIN {
     } else if($1 == "LogLevel") {
         $2 = LogLevel;
         FoundLogLevel = 1;
-    }
-    if($1 != "AllowGroups") {
-        print $0;
     }
 }
 END {
@@ -48,6 +49,9 @@ END {
     if(!FoundPasswordAuthentication) {
         print "PasswordAuthentication " PasswordAuthentication;
     }
+    if(!FoundRSAAuthentication) {
+        print "RSAAuthentication " RSAAuthentication;
+    }
     if(!FoundAllowTcpForwarding) {
         print "AllowTcpForwarding " AllowTcpForwarding;
     }
@@ -57,5 +61,4 @@ END {
     if(!FoundLogLevel) {
         print "LogLevel " LogLevel;
     }
-    print "AllowGroups " AllowGroups;
 }
