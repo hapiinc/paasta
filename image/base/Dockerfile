@@ -1,42 +1,32 @@
-# Docker 0.7.6
-# Image hapi/base
+# Docker 0.10.0, build dc9c28f
+# Image paasta/base
 
 FROM ubuntu:latest
-MAINTAINER Tony J. Tahmouch <tony@hapi.co>
+MAINTAINER Tony Tahmouch <ttahmouch@gmail.com>
 
-# Install Git and SSH
-RUN apt-get update && \
-    apt-get install -q -y git \
-                          openssh-server \
-                          make
-
-# Create Git Shell User
-RUN groupadd git && \
-    useradd --gid git \
-            --shell /usr/bin/git-shell \
-            --home /home/git \
-            --create-home \
-            git
-
-# Prepare SSH
-ADD ssh/sshd_config.awk /etc/ssh/
-RUN mkdir -p /var/run/sshd && \
-    mkdir -p /home/git/.ssh && \
-    touch /home/git/.ssh/authorized_keys && \
-    chgrp git /home/git/.ssh/authorized_keys && \
-    chmod g+rw /home/git/.ssh/authorized_keys && \
-    cp /etc/ssh/sshd_config /etc/ssh/sshd_config.old && \
-    chmod a-w /etc/ssh/sshd_config.old && \
-    cat /etc/ssh/sshd_config.old | awk -f /etc/ssh/sshd_config.awk > /etc/ssh/sshd_config
-EXPOSE 22
+# Prepare Base Stack
+RUN su - root -c "apt-get update && \
+                  apt-get install -q -y git make openssh-server supervisor nano vim curl socat wget \
+                                        python-software-properties software-properties-common python g++ \
+                                        build-essential && \
+                  curl http://nodejs.org/dist/v0.10.26/node-v0.10.26.tar.gz | tar zx node-v0.10.26  && \
+                  cd node-v0.10.26 && ./configure && make && make install && \
+                  npm install --unsafe-perm -g codebox forever"
 
 # Prepare Git
-ADD git-shell-commands/ /home/git/git-shell-commands/
-ADD hooks/ /home/git/.git-templates/hooks/
-RUN git --bare init --template="/home/git/.git-templates" /home/git/app.git && \
-    chgrp -hR git /home/git/app.git && \
-    chmod -R g+rwx /home/git/app.git
+ADD git-shell-commands/ /root/git-shell-commands/
+ADD hooks/ /root/.git-templates/hooks/
+RUN su - root -c "mkdir -p app && \
+                  git-shell-commands/git --add app.git"
+
+# Prepare Supervisor and SSH Daemons
+ADD supervisor/supervisord.conf /etc/supervisor/conf.d/
+ADD ssh/sshd_config.awk /etc/ssh/
+RUN su - root -c "mkdir -p /var/log/supervisor && \
+                  mkdir -p /var/run/sshd && \
+                  cat /etc/ssh/sshd_config | awk -f /etc/ssh/sshd_config.awk > /etc/ssh/sshd_config"
 
 # Bootstrap
-ADD bin/ /opt/bin/
-CMD "/opt/bin/entry"
+ENV HOME /root
+EXPOSE 22 80 8080
+CMD ["/usr/bin/supervisord"]
