@@ -9,14 +9,20 @@ then
     for APP in *.git
     do
         # Invoke the deployment hook script to start the application.
-        if [ "$APP" = "$PROJECT" ]
+        if [ "${APP}" = "${PROJECT}" ]
         then
             # May eventually decouple from the hooks path.
-            cd $APP && sh hooks/post-receive
+            cd ${APP} && sh hooks/post-receive
             break
         fi
     done
+elif [ "$1" = "--log" ]
+then
+    # Tail the Application Log File.
+    cd
+    tail -f ${HOME}/temp/log
 else
     echo "Please Enter a Supported Option:"
     echo "--start <project.git>"
+    echo "--log"
 fi

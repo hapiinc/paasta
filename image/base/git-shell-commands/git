@@ -6,14 +6,14 @@ then
     PROJECT=$(echo "$2" | sed 's/\.git$\|$/.git/i')
     # Create a Bare Git Project in the Home Directory with the Given Name.
     cd
-    git --bare init --template="/home/git/.git-templates" $PROJECT
+    git --bare init --template="${HOME}/.git-templates" ${PROJECT}
 elif [ "$1" = "--list" ]
 then
     # Log all Git Projects in the Home Directory.
     cd
     for FILE in *.git
     do
-        echo "$FILE"
+        echo "${FILE}"
     done
 else
     echo "Please Enter a Supported Option:"

@@ -5,7 +5,7 @@ echo "Available commands:"
 cd "$(dirname "$0")"
 for FILE in *
 do
-    echo "$FILE"
+    echo "${FILE}"
 done
 # Exit is an Available Command in a TTY.
 echo "exit"
