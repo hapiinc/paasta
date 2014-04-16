@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Install Application to Temporary Directory.
-TEMPDIR=/home/git/temp
+TEMPDIR=${HOME}/temp
 
 # Clean the Temporary Directory.
-rm -rf $TEMPDIR && mkdir -p $TEMPDIR
+rm -rf ${TEMPDIR} && mkdir -p ${TEMPDIR}
 
 # Checkout a Clean Working Tree of Master to the Directory.
-git --work-tree=$TEMPDIR checkout -f
+git --work-tree=${TEMPDIR} checkout -f
 
 # Deploy the Application with Make, and Ignore Errors. Make is assumed for all Deployments.
-make -i -C $TEMPDIR
+make -i -C ${TEMPDIR}
